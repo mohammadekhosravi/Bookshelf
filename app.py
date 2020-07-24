@@ -23,12 +23,15 @@ def add_book_pic(pic_upload, name):
     filename = pic_upload.filename
     ext_type = filename.split('.')[-1]
     storage_filename = str(name) + '.' + ext_type
+    original_file = str(name) + "_original." + ext_type
 
     filepath = os.path.join(current_app.root_path, 'static/book_pics', storage_filename)
+    original_filepath = os.path.join(current_app.root_path, 'static/original_book_pics', original_file)
 
     output_size = (500, 500)
 
     pic = Image.open(pic_upload)
+    pic.save(original_filepath)
     pic.thumbnail(output_size)
     pic.save(filepath)
 
@@ -38,7 +41,7 @@ class Book(db.Model):
     __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256), unique=True, index=True)
-    image = db.Column(db.String(128), nullable=False, default='default.png')
+    image = db.Column(db.String(128), nullable=False, default='default.jpg')
     author = db.Column(db.String(128), nullable=False, index=True)
     translator = db.Column(db.String(128), nullable=True)
     # Translated virsion publication date
