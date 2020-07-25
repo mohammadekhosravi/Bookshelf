@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %} Show {% endblock %}
+
+{% block head %}
+
+  {{ super() }}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/show_book.css') }}">
+
+{% endblock %}
+
+{% block page_content %}
+
+  <div class="card mb-3" style="max-width: 1380px;">
+
+    <div class="row no-gutters">
+
+      <div class="col-md-4">
+
+        <img src=" {{ url_for('static', filename='book_pics/{}'.format(book.image)) }} " class="card-img" alt="Image Not Found">
+
+      </div>
+
+      <div class="col-md-8">
+
+        <div class="card-body">
+
+          <ul class="diamond">
+
+            <li><h5 class="card-title">{{ book.name }}</h5></li>
+
+            <li><p class="card-text">Author: {{ book.author  }}</p></li>
+
+            {% if book.translator %}
+              <li><p class="card-text">Translator: {{ book.translator }}</p></li>
+            {% endif %}
+
+            {% if book.translation_date %}
+              <li><p class="card-text">Translation to Persian Date: {{ book.translation_date }}</p></li>
+            {% endif %}
+
+          </ul>
+
+        </div>
+
+      </div>
+      
+    </div>
+
+  </div>
+
+{% endblock %}

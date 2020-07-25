@@ -1,6 +1,4 @@
 # Ignore sqlite data bases.
-**/*.sqlite
-*.sqlite
 # Ignore environment file setup.
 *.env
 **/*.env
