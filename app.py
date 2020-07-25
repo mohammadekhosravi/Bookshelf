@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, url_for, flash, current_app, redirect
+from flask import Flask, render_template, url_for, flash, current_app, redirect, request
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
@@ -20,19 +20,20 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 def add_book_pic(pic_upload, name):
+    hsize = 650
+
     filename = pic_upload.filename
     ext_type = filename.split('.')[-1]
     storage_filename = str(name) + '.' + ext_type
-    original_file = str(name) + "_original." + ext_type
 
     filepath = os.path.join(current_app.root_path, 'static/book_pics', storage_filename)
-    original_filepath = os.path.join(current_app.root_path, 'static/original_book_pics', original_file)
-
-    output_size = (500, 500)
 
     pic = Image.open(pic_upload)
-    pic.save(original_filepath)
-    pic.thumbnail(output_size)
+    
+    hpercent = (hsize/float(pic.size[1]))
+    wsize = int((float(pic.size[0]) * float(hpercent)))
+    pic = pic.resize((wsize, hsize), Image.ANTIALIAS)
+
     pic.save(filepath)
 
     return storage_filename
@@ -55,12 +56,29 @@ class AddForm(FlaskForm):
     author = StringField('Author', validators=[DataRequired()])
     translator = StringField('Translator')
     translation_date = StringField('Translation Date')
-    image = FileField('Image', validators=[FileAllowed(['jpg', 'png'])])
+    image = FileField('Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
     submit = SubmitField('Add')
 
 @app.route('/')
+@app.route('/index')
 def index():
-    return render_template('base.html')
+    page = request.args.get('page', 1, type=int)
+    books = Book.query.paginate(page, 4, False)
+
+    next_url = url_for('index', page=books.next_num) \
+        if books.has_next else None
+    prev_url = url_for('index', page=books.prev_num) \
+        if books.has_prev else None
+
+    return render_template('index.html', books=books.items, next_url=next_url, prev_url=prev_url,
+                           has_prev=page)
+
+@app.route('/show_book/<int:id>')
+def show_book(id):
+    book = Book.query.filter_by(id=id).first()
+
+    return render_template("show_book.html", book=book)
+
 
 @app.route('/add', methods=["GET", "POST"])
 def add():

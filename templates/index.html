@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %} Bookshelf {% endblock %}
+
+{% block head %}
+
+  {{ super() }}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+
+{% endblock %}
+
+
+{% block page_content %}
+
+  <div class="container">
+
+    {% for book in books %}
+
+    <div class="box">
+
+      <a href={{ url_for('show_book', id=book.id) }}>
+        <img src=" {{ url_for('static', filename='book_pics/{}'.format(book.image)) }} ">
+      </a>
+
+    </div>
+
+    {% endfor %}
+
+  </div>
+
+  <nav aria-label='...'>
+
+    <ul class="pagination justify-content-center">
+
+      <li class="page-item"><a class="page-link" href={{ prev_url }}>Previous</a></li>
+      <li class="page-item"><a class="page-link" href={{ next_url }}>Next</a></li>
+
+    </ul>
+
+  </nav>
+
+{% endblock %}
