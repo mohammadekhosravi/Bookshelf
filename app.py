@@ -70,8 +70,7 @@ def index():
     prev_url = url_for('index', page=books.prev_num) \
         if books.has_prev else None
 
-    return render_template('index.html', books=books.items, next_url=next_url, prev_url=prev_url,
-                           has_prev=page)
+    return render_template('index.html', books=books.items, next_url=next_url, prev_url=prev_url)
 
 @app.route('/show_book/<int:id>')
 def show_book(id):
